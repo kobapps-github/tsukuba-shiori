@@ -313,6 +313,52 @@
     letter-spacing: 0.3em;
     color: var(--sand);
   }
+
+  /* ===== ANIMATIONS ===== */
+
+  /* B: 表紙フェードイン */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .cover-label   { opacity: 0; animation: fadeInUp 0.6s ease forwards; animation-delay: 0.1s; }
+  .cover-title   { opacity: 0; animation: fadeInUp 0.7s ease forwards; animation-delay: 0.35s; }
+  .cover-subtitle{ opacity: 0; animation: fadeInUp 0.6s ease forwards; animation-delay: 0.55s; }
+  .cover-divider { opacity: 0; animation: fadeInUp 0.5s ease forwards; animation-delay: 0.75s; }
+  .cover-dates   { opacity: 0; animation: fadeInUp 0.6s ease forwards; animation-delay: 0.95s; }
+  .cover-tags    { opacity: 0; animation: fadeInUp 0.6s ease forwards; animation-delay: 1.15s; }
+
+  /* C: ドットのパルス */
+  @keyframes dotPulse {
+    0%, 100% { box-shadow: 0 0 0 1px var(--earth); }
+    50%       { box-shadow: 0 0 0 5px rgba(92,74,53,0.15), 0 0 0 1px var(--earth); }
+  }
+
+  .tl-dot.big {
+    animation: dotPulse 2.4s ease-in-out infinite;
+  }
+
+  /* D: カードのホバー/タップ */
+  .tl-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+  }
+
+  .tl-card:hover  { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+  .tl-card:active { transform: translateY(0);    box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
+  /* A: スクロールフェードイン（初期状態） */
+  .tl-item {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .tl-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
 </head>
 <body>
@@ -542,5 +588,21 @@
   <div class="footer">✦ &nbsp; 楽しい旅になりますように &nbsp; ✦</div>
 
 </div>
+<script>
+  // A: スクロールで順番にフェードイン
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.tl-item').forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.06) + 's';
+    observer.observe(item);
+  });
+</script>
 </body>
 </html>
